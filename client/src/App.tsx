@@ -14,7 +14,7 @@ const App: React.FC = () => {
         <div style={{marginTop: 120, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
           <Route exact path='/' component={BoardListPage} />
           <Route path='/board/:id' component={BoardDetailPage} />
-          <Route path='/write/:id' component={BoardWritePage} />
+          <Route path='/write' component={BoardWritePage} />
         </div>
       </BrowserRouter>
     </ApolloProvider>

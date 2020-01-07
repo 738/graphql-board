@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table } from 'antd';
+import { Table, Button } from 'antd';
 import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 import { useHistory } from 'react-router';
@@ -40,17 +40,19 @@ const BoardListPage: React.FC = () => {
     let dataSource = data.list;
 
     return (
-        <Table
-            dataSource={dataSource}
-            columns={columns}
-            style={{width: 1000, cursor: 'pointer'}}
-            onRow={(record: any, rowIndex) => {
-                    console.log(record);
+        <div style={{display: 'flex', flexDirection: 'column'}}>
+            <Table
+                dataSource={dataSource}
+                columns={columns}
+                style={{width: 1000, cursor: 'pointer'}}
+                onRow={(record: any, rowIndex) => {
                     return {
-                    onClick: event => { history.push(`/board/${record['id']}`)},
-                }}
-            }
-        />
+                        onClick: event => { history.push(`/board/${record['id']}`)},
+                    }}
+                }
+            />
+            <Button type="primary" style={{width: 80}} onClick={() => {history.push(`/write`)}}>글 작성</Button>
+        </div>
     )
 }
 
