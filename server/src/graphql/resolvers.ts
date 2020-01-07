@@ -15,6 +15,15 @@ let boards: Board[] = [
     }
 ];
 
+const getBoardById = (_, { id }) => {
+    for (let i=0; i<boards.length; i++) {
+        if (id == boards[i].id) {
+            return boards[i];
+        }
+    }
+    return null;
+}
+
 const createBoard = (_, { input }): Board => {
     const { title, contents, author } = input;
     const id = boards[boards.length - 1].id + 1;
@@ -48,7 +57,8 @@ const deleteBoard = (_, { id }): Board => {
 
 export default {
     Query: {
-        list: () => boards
+        list: () => boards,
+        detail: getBoardById,
     },
     Mutation: {
         createBoard,

@@ -13,6 +13,7 @@ type Board {
 
 type Query {
     list: [Board]!
+    detail(id: ID!): Board
 }
 
 type Mutation {
