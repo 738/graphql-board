@@ -3,8 +3,13 @@ import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 
 const HELLO_QUERY = gql`
-  {
-    hello(name: "junwood")
+  query {
+    list {
+      id
+      title
+      contents
+      author
+    }
   }
 `;
 
@@ -15,7 +20,7 @@ const Hello: React.FC = () => {
     console.log(data);
     return (
       <div>
-          {data.hello}
+          {data.list[0].title}
       </div>
     )
 }

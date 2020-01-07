@@ -12,6 +12,78 @@ let boards: Board[] = [
         title: 'hello world22',
         contents: 'this is graphql222',
         author: 'junwoo2',
+    },
+    {
+        id: 2,
+        title: 'hello world',
+        contents: 'this is graphql',
+        author: 'junwoo',
+    },
+    {
+        id: 3,
+        title: 'hello world22',
+        contents: 'this is graphql222',
+        author: 'junwoo2',
+    },
+    {
+        id: 4,
+        title: 'hello world',
+        contents: 'this is graphql',
+        author: 'junwoo',
+    },
+    {
+        id: 5,
+        title: 'hello world22',
+        contents: 'this is graphql222',
+        author: 'junwoo2',
+    },
+    {
+        id: 6,
+        title: 'hello world',
+        contents: 'this is graphql',
+        author: 'junwoo',
+    },
+    {
+        id: 7,
+        title: 'hello world22',
+        contents: 'this is graphql222',
+        author: 'junwoo2',
+    },
+    {
+        id: 8,
+        title: 'hello world',
+        contents: 'this is graphql',
+        author: 'junwoo',
+    },
+    {
+        id: 9,
+        title: 'hello world22',
+        contents: 'this is graphql222',
+        author: 'junwoo2',
+    },
+    {
+        id: 10,
+        title: 'hello world',
+        contents: 'this is graphql',
+        author: 'junwoo',
+    },
+    {
+        id: 11,
+        title: 'hello world22',
+        contents: 'this is graphql222',
+        author: 'junwoo2',
+    },
+    {
+        id: 12,
+        title: 'hello world',
+        contents: 'this is graphql',
+        author: 'junwoo',
+    },
+    {
+        id: 13,
+        title: 'hello world22',
+        contents: 'this is graphql222',
+        author: 'junwoo2',
     }
 ];
 

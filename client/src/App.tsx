@@ -1,13 +1,22 @@
 import React from 'react';
-import './App.css';
+import { BrowserRouter, Route } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/react-hooks';
 import client from './apollo/client';
-import Hello from './components/Hello';
+import BoardListPage from './pages/BoardListPage';
+import BoardDetailPage from './pages/BoardDetailPage';
+import BoardWritePage from './pages/BoardWritePage';
+import 'antd/dist/antd.css';
 
 const App: React.FC = () => {
   return (
     <ApolloProvider client={client}>
-      <Hello />
+      <BrowserRouter>
+        <div style={{marginTop: 120, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+          <Route exact path='/' component={BoardListPage} />
+          <Route path='/board/:id' component={BoardDetailPage} />
+          <Route path='/write/:id' component={BoardWritePage} />
+        </div>
+      </BrowserRouter>
     </ApolloProvider>
   );
 }
