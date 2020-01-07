@@ -1,3 +1,22 @@
+input BoardInput {
+    title: String!
+    contents: String!
+    author: String!
+}
+
+type Board {
+    id: ID!
+    title: String!
+    contents: String!
+    author: String!
+}
+
 type Query {
-    hello(name: String): String!
+    list: [Board]!
+}
+
+type Mutation {
+    createBoard(input: BoardInput!): Board
+    editBoard(id: Int!, input: BoardInput!): Board
+    deleteBoard(id: Int!): Board
 }
