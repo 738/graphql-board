@@ -1,5 +1,9 @@
-import { GraphQLServer } from 'graphql-yoga';
+import { ApolloServer } from 'apollo-server';
+import typeDefs from './graphql/typeDefs';
 import resolvers from './graphql/resolvers';
 
-const server = new GraphQLServer({ typeDefs: 'src/graphql/schema.graphql', resolvers });
-server.start(() => console.log('Server is running'));
+const server = new ApolloServer({ typeDefs, resolvers });
+
+server.listen().then(({ url }) => {
+    console.log(`server is running at ${url}`);
+});
