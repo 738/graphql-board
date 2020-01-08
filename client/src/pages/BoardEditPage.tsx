@@ -1,43 +1,73 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router";
+import { useHistory, useParams } from "react-router";
 import { gql } from "apollo-boost";
-import { useMutation } from "@apollo/react-hooks";
+import { useMutation, useQuery } from "@apollo/react-hooks";
 import { Divider, Input, Button } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 
-const boardWriteMutation = gql`
-  mutation CreateBoard($title: String!, $contents: String!, $author: String!) {
-    createBoard(
-      input: { title: $title, contents: $contents, author: $author }
-    ) {
+const boardDetailQuery = gql`
+  query Detail($id: ID!) {
+    detail(id: $id) {
       id
       title
+      contents
       author
     }
   }
 `;
 
-const BoardWritePage = () => {
+const boardEditMutation = gql`
+  mutation EditBoard(
+    $id: ID!,
+    $title: String!,
+    $contents: String!,
+    $author: String!,
+  ) {
+    editBoard(
+      id: $id,
+      input: { title: $title, contents: $contents, author: $author }
+    ) {
+      id
+      title
+      contents
+      author
+    }
+  }
+`;
+
+const BoardEditPage = () => {
   let [title, setTitle] = useState("");
   let [author, setAuthor] = useState("");
   let [contents, setContents] = useState("");
   let history = useHistory();
-  const [createBoard, { loading, error, data }] = useMutation(boardWriteMutation);
+  let { id } = useParams();
+  const { loading: detailLoading, data: detailData } = useQuery(boardDetailQuery, {
+    variables: { id }
+  });
+
+  const [editBoard, { loading, error, data }] = useMutation(boardEditMutation);
   useEffect(() => {
-    console.log(data);
-    return () => {
-        history.push('/');
+    console.log(detailData);
+    if (detailData) {
+      setTitle(detailData.detail.title);
+      setAuthor(detailData.detail.author);
+      setContents(detailData.detail.contents);
     }
-  }, [data])
-  const onComplete = () => {
-    createBoard({
+  }, [detailData]);
+
+  const onEditCompleted = () => {
+    editBoard({
       variables: {
+        id,
         title,
         author,
         contents
       }
-    }).then(_ => history.push(`/`));
+    }).then(_ => history.push(`/board/${id}`));
   };
+
+  if (detailLoading) return <div>loading...</div>;
+
   return (
     <div
       style={{
@@ -58,6 +88,7 @@ const BoardWritePage = () => {
         placeholder="작성자"
         value={author}
         onChange={e => setAuthor(e.target.value)}
+        disabled
       />
       <Divider />
       <TextArea
@@ -69,12 +100,12 @@ const BoardWritePage = () => {
       <Button
         type="primary"
         style={{ float: "right", marginTop: 12 }}
-        onClick={onComplete}
+        onClick={onEditCompleted}
       >
-        작성완료
+        편집완료
       </Button>
     </div>
   );
 };
 
-export default BoardWritePage;
+export default BoardEditPage;

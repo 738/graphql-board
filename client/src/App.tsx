@@ -6,6 +6,7 @@ import BoardListPage from './pages/BoardListPage';
 import BoardDetailPage from './pages/BoardDetailPage';
 import BoardWritePage from './pages/BoardWritePage';
 import 'antd/dist/antd.css';
+import BoardEditPage from './pages/BoardEditPage';
 
 const App: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ const App: React.FC = () => {
           <Route exact path='/' component={BoardListPage} />
           <Route path='/board/:id' component={BoardDetailPage} />
           <Route path='/write' component={BoardWritePage} />
+          <Route path='/edit/:id' component={BoardEditPage} />
         </div>
       </BrowserRouter>
     </ApolloProvider>
