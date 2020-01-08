@@ -20,7 +20,7 @@ const createBoard = (_, { input }): Board => {
 const editBoard = (_, {id, input}): Board => {
     const { title, contents, author } = input;
     for (let i=0; i<boards.length; i++) {
-        if (id === boards[i].id) {
+        if (id == boards[i].id) {
             boards[i].title = title;
             boards[i].contents = contents;
             boards[i].author = author;
@@ -32,7 +32,7 @@ const editBoard = (_, {id, input}): Board => {
 
 const deleteBoard = (_, { id }): Board => {
     for (let i=0; i<boards.length; i++) {
-        if (id === boards[i].id) {
+        if (id == boards[i].id) {
             return boards.splice(i, 1).shift();
         }
     }

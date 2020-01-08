@@ -18,6 +18,6 @@ type Query {
 
 type Mutation {
     createBoard(input: BoardInput!): Board
-    editBoard(id: Int!, input: BoardInput!): Board
-    deleteBoard(id: Int!): Board
+    editBoard(id: ID!, input: BoardInput!): Board
+    deleteBoard(id: ID!): Board
 }
