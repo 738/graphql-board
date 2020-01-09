@@ -4,6 +4,7 @@ import { gql } from "apollo-boost";
 import { useMutation, useQuery } from "@apollo/react-hooks";
 import { Divider, Input, Button } from "antd";
 import TextArea from "antd/lib/input/TextArea";
+import { boardListQuery } from "./BoardListPage";
 
 const boardDetailQuery = gql`
   query Detail($id: ID!) {
@@ -18,13 +19,13 @@ const boardDetailQuery = gql`
 
 const boardEditMutation = gql`
   mutation EditBoard(
-    $id: ID!,
-    $title: String!,
-    $contents: String!,
-    $author: String!,
+    $id: ID!
+    $title: String!
+    $contents: String!
+    $author: String!
   ) {
     editBoard(
-      id: $id,
+      id: $id
       input: { title: $title, contents: $contents, author: $author }
     ) {
       id
@@ -41,11 +42,21 @@ const BoardEditPage = () => {
   let [contents, setContents] = useState("");
   let history = useHistory();
   let { id } = useParams();
-  const { loading: detailLoading, data: detailData } = useQuery(boardDetailQuery, {
-    variables: { id }
-  });
+  const { loading: detailLoading, data: detailData } = useQuery(
+    boardDetailQuery,
+    {
+      variables: { id }
+    }
+  );
 
-  const [editBoard, { loading, error, data }] = useMutation(boardEditMutation);
+  const [editBoard, { loading }] = useMutation(boardEditMutation, {
+    awaitRefetchQueries: true,
+    refetchQueries: [
+      {
+        query: boardListQuery
+      }
+    ]
+  });
   useEffect(() => {
     if (detailData) {
       setTitle(detailData.detail.title);

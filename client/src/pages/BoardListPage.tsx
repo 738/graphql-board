@@ -33,9 +33,7 @@ const columns = [
 ];
 
 const BoardListPage: React.FC = () => {
-  const { loading, error, data } = useQuery(boardListQuery, {
-    fetchPolicy: 'cache-and-network'
-  });
+  const { loading, error, data } = useQuery(boardListQuery);
   let history = useHistory();
   
   if (loading) return <p>loading...</p>;

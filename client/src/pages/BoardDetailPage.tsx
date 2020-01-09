@@ -3,6 +3,7 @@ import { gql } from "apollo-boost";
 import { useParams, useHistory } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { Divider, Button } from "antd";
+import { boardListQuery } from "./BoardListPage";
 
 const boardDetailQuery = gql`
   query Detail($id: ID!) {
@@ -29,10 +30,17 @@ const boardDeleteMutation = gql`
 const BoardDetailPage = () => {
   const history = useHistory();
   const { id } = useParams();
-  const { loading, error, data } = useQuery(boardDetailQuery, {
+  const { loading, data } = useQuery(boardDetailQuery, {
     variables: { id }
   });
-  const [deleteBoard, { data: deleteData }] = useMutation(boardDeleteMutation);
+  const [deleteBoard] = useMutation(boardDeleteMutation, {
+    awaitRefetchQueries: true,
+    refetchQueries: [
+      {
+        query: boardListQuery
+      }
+    ]
+  });
   const onDeleteCompleted = () => {
     deleteBoard({
       variables: {
@@ -45,7 +53,7 @@ const BoardDetailPage = () => {
     <div style={{ width: "60%", display: "flex", flexDirection: "column" }}>
       <Button
         style={{ width: 80, marginBottom: 20 }}
-        onClick={() => history.push('/')}
+        onClick={() => history.push("/")}
       >
         목록으로
       </Button>

@@ -23,7 +23,12 @@ const BoardWritePage = () => {
   let [author, setAuthor] = useState("");
   let [contents, setContents] = useState("");
   let history = useHistory();
-  const [createBoard] = useMutation(boardWriteMutation);
+  const [createBoard] = useMutation(boardWriteMutation, {
+    awaitRefetchQueries: true,
+      refetchQueries: [{
+        query: boardListQuery
+      }]
+  });
 
   const onComplete = () => {
     createBoard({
