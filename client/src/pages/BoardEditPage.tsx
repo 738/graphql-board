@@ -47,7 +47,6 @@ const BoardEditPage = () => {
 
   const [editBoard, { loading, error, data }] = useMutation(boardEditMutation);
   useEffect(() => {
-    console.log(detailData);
     if (detailData) {
       setTitle(detailData.detail.title);
       setAuthor(detailData.detail.author);

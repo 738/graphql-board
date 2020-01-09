@@ -4,8 +4,8 @@ import { useQuery } from "@apollo/react-hooks";
 import { gql } from "apollo-boost";
 import { useHistory } from "react-router";
 
-const boardListQuery = gql`
-  query {
+export const boardListQuery = gql`
+  query GetList {
     list {
       id
       title
@@ -33,7 +33,9 @@ const columns = [
 ];
 
 const BoardListPage: React.FC = () => {
-  const { loading, error, data } = useQuery(boardListQuery);
+  const { loading, error, data } = useQuery(boardListQuery, {
+    fetchPolicy: 'cache-and-network'
+  });
   let history = useHistory();
   if (loading) return <p>loading...</p>;
   if (error) return <p>{error} error!</p>;

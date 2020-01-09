@@ -38,11 +38,17 @@ const BoardDetailPage = () => {
       variables: {
         id
       }
-    }).then(_ => history.push('/'));
+    }).then(_ => history.push("/"));
   };
   if (loading) return <p>loading...</p>;
   return (
     <div style={{ width: "60%", display: "flex", flexDirection: "column" }}>
+      <Button
+        style={{ width: 80, marginBottom: 20 }}
+        onClick={() => history.push('/')}
+      >
+        목록으로
+      </Button>
       <div
         style={{
           border: "0.5px solid black",
