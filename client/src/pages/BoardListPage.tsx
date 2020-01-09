@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Table, Button } from "antd";
 import { useQuery } from "@apollo/react-hooks";
 import { gql } from "apollo-boost";
@@ -37,8 +37,10 @@ const BoardListPage: React.FC = () => {
     fetchPolicy: 'cache-and-network'
   });
   let history = useHistory();
+  
   if (loading) return <p>loading...</p>;
   if (error) return <p>{error} error!</p>;
+
   let dataSource = data.list;
 
   return (
@@ -46,6 +48,7 @@ const BoardListPage: React.FC = () => {
       <Table
         dataSource={dataSource.sort((a: any, b: any) => b.id - a.id)}
         columns={columns}
+        rowKey={(record: any) => record['id']}
         style={{ width: 1000, cursor: "pointer" }}
         onRow={(record: any, rowIndex) => {
           return {
