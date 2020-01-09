@@ -30,3 +30,7 @@ npm run start
 ```
 
 - URL: http://localhost:3000
+
+## Demo
+
+![demo.gif](./demo.gif)
