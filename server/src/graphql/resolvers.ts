@@ -1,4 +1,4 @@
-import Board from "../types/Board";
+import Board, { Comment } from "../types/Board";
 
 const getBoardById = (_, { id }) => {
     for (let i=0; i<boards.length; i++) {
@@ -10,9 +10,8 @@ const getBoardById = (_, { id }) => {
 }
 
 const createBoard = (_, { input }): Board => {
-    const { title, contents, author } = input;
-    const id = boards[boards.length - 1].id + 1;
-    const newBoard = new Board(id, { title, contents, author });
+    const id: string = (boards.length ? (+boards[boards.length - 1].id + 1) : 0) + '';
+    const newBoard = new Board(id, input);
     boards.push(newBoard);
     return newBoard;
 }
@@ -39,6 +38,17 @@ const deleteBoard = (_, { id }): Board => {
     return null;
 }
 
+const createComment = (_, { input }): Comment => {
+    for (let i=0; i<boards.length; i++) {
+        if (input.boardId == boards[i].id) {
+            const id: string = (boards[i].comments.length ? (+boards[i].comments[boards[i].comments.length - 1].id + 1) : 0)+ '';
+            const newComment = new Comment(id, input);
+            boards[i].comments.push(newComment);
+            return newComment;
+        }
+    }
+    return null;
+}
 
 export default {
     Query: {
@@ -49,92 +59,73 @@ export default {
         createBoard,
         editBoard,
         deleteBoard,
+        createComment,
     }
 }
 
 let boards: Board[] = [
     {
-        id: 0,
+        id: '0',
         title: 'hello world',
         contents: 'this is graphql',
         author: 'junwoo',
+        comments: [],
     },
     {
-        id: 1,
+        id: '1',
         title: 'hello world22',
         contents: 'this is graphql222',
         author: 'junwoo2',
+        comments: [],
     },
     {
-        id: 2,
+        id: '2',
         title: 'hello world',
         contents: 'this is graphql',
         author: 'junwoo',
+        comments: [],
     },
     {
-        id: 3,
+        id: '3',
         title: 'hello world22',
         contents: 'this is graphql222',
         author: 'junwoo2',
+        comments: [],
     },
     {
-        id: 4,
+        id: '4',
         title: 'hello world',
         contents: 'this is graphql',
         author: 'junwoo',
+        comments: [],
     },
     {
-        id: 5,
+        id: '5',
         title: 'hello world22',
         contents: 'this is graphql222',
         author: 'junwoo2',
+        comments: [],
     },
     {
-        id: 6,
+        id: '6',
         title: 'hello world',
         contents: 'this is graphql',
         author: 'junwoo',
+        comments: [],
     },
     {
-        id: 7,
+        id: '7',
         title: 'hello world22',
         contents: 'this is graphql222',
         author: 'junwoo2',
+        comments: [{
+            id: '0',
+            author: 'lucky',
+            contents: 'hello world'
+        }, {
+            id: '1',
+            author: 'lucky2',
+            contents: 'hello world2'
+        }],
     },
-    {
-        id: 8,
-        title: 'hello world',
-        contents: 'this is graphql',
-        author: 'junwoo',
-    },
-    {
-        id: 9,
-        title: 'hello world22',
-        contents: 'this is graphql222',
-        author: 'junwoo2',
-    },
-    {
-        id: 10,
-        title: 'hello world',
-        contents: 'this is graphql',
-        author: 'junwoo',
-    },
-    {
-        id: 11,
-        title: 'hello world22',
-        contents: 'this is graphql222',
-        author: 'junwoo2',
-    },
-    {
-        id: 12,
-        title: 'hello world',
-        contents: 'this is graphql',
-        author: 'junwoo',
-    },
-    {
-        id: 13,
-        title: 'hello world22',
-        contents: 'this is graphql222',
-        author: 'junwoo2',
-    }
 ];

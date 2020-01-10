@@ -7,11 +7,24 @@ const typeDefs = gql`
         author: String!
     }
 
+    input CommentInput {
+        boardId: ID!
+        author: String!
+        contents: String!
+    }
+
     type Board {
         id: ID!
         title: String!
         contents: String!
         author: String!
+        comments: [Comment!]!
+    }
+
+    type Comment {
+        id: ID!
+        author: String!
+        contents: String!
     }
 
     type Query {
@@ -23,6 +36,7 @@ const typeDefs = gql`
         createBoard(input: BoardInput!): Board
         editBoard(id: ID!, input: BoardInput!): Board
         deleteBoard(id: ID!): Board
+        createComment(input: CommentInput!): Comment
     }
 `;
 
