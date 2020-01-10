@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { gql } from "apollo-boost";
 import { useParams, useHistory } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/react-hooks";
-import { Divider, Button } from "antd";
+import { Divider, Button, Modal, Comment } from "antd";
 import { boardListQuery } from "./BoardListPage";
+import CommentEditor from "../components/CommentEditor";
 
 const boardDetailQuery = gql`
   query Detail($id: ID!) {
@@ -12,6 +13,11 @@ const boardDetailQuery = gql`
       title
       contents
       author
+      comments {
+        id
+        author
+        contents
+      }
     }
   }
 `;
@@ -27,9 +33,25 @@ const boardDeleteMutation = gql`
   }
 `;
 
+const createCommentMutation = gql`
+  mutation CreateComment($boardId: ID!, $author: String!, $contents: String!) {
+    createComment(
+      input: { boardId: $boardId, author: $author, contents: $contents }
+    ) {
+      id
+      author
+      contents
+    }
+  }
+`;
+
 const BoardDetailPage = () => {
   const history = useHistory();
   const { id } = useParams();
+  const [deleteConfirmModalVisible, setDeleteConfirmModalVisible] = useState(
+    false
+  );
+  const [commentValue, setCommentValue] = useState("");
   const { loading, data } = useQuery(boardDetailQuery, {
     variables: { id }
   });
@@ -41,7 +63,20 @@ const BoardDetailPage = () => {
       }
     ]
   });
+  const [createComment, { loading: createCommentLoading }] = useMutation(
+    createCommentMutation,
+    {
+      awaitRefetchQueries: true,
+      refetchQueries: [
+        {
+          query: boardDetailQuery,
+          variables: { id }
+        }
+      ]
+    }
+  );
   const onDeleteCompleted = () => {
+    setDeleteConfirmModalVisible(false);
     deleteBoard({
       variables: {
         id
@@ -69,22 +104,68 @@ const BoardDetailPage = () => {
         <Divider />
         <p style={{ paddingTop: 20, fontSize: 20 }}>{data.detail.contents}</p>
       </div>
-      <Button
-        type="primary"
-        style={{ width: 80, marginTop: 20 }}
-        onClick={() => {
-          history.push(`/edit/${id}`);
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignSelf: "flex-end",
+          marginBottom: 20
         }}
       >
-        글 편집
-      </Button>
-      <Button
-        type="danger"
-        style={{ width: 80, marginTop: 20 }}
-        onClick={onDeleteCompleted}
+        <Button
+          type="primary"
+          style={{ width: 80, marginTop: 20, marginRight: 20 }}
+          onClick={() => {
+            history.push(`/edit/${id}`);
+          }}
+        >
+          글 편집
+        </Button>
+        <Button
+          type="danger"
+          style={{ width: 80, marginTop: 20 }}
+          onClick={() => setDeleteConfirmModalVisible(true)}
+        >
+          글 삭제
+        </Button>
+      </div>
+      <CommentEditor
+        onChange={(event: any) => {
+          setCommentValue(event.target.value);
+        }}
+        onSubmit={() => {
+          createComment({
+            variables: {
+              boardId: id,
+              author: "USER",
+              contents: commentValue
+            }
+          }).then(_ => setCommentValue(""));
+          
+        }}
+        submitting={createCommentLoading}
+        value={commentValue}
+      />
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        {data.detail.comments
+          .sort((a: any, b: any) => b.id - a.id)
+          .map((comment: any) => {
+            return (
+              <Comment
+                author={<a>{comment.author}</a>}
+                content={<p>{comment.contents}</p>}
+              />
+            );
+          })}
+      </div>
+      <Modal
+        title="알림"
+        visible={deleteConfirmModalVisible}
+        onOk={onDeleteCompleted}
+        onCancel={() => setDeleteConfirmModalVisible(false)}
       >
-        글 삭제
-      </Button>
+        <p>정말 삭제하시겠습니까?</p>
+      </Modal>
     </div>
   );
 };

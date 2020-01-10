@@ -10,6 +10,9 @@ export const boardListQuery = gql`
       id
       title
       author
+      comments {
+        id
+      }
     }
   }
 `;
@@ -44,7 +47,12 @@ const BoardListPage: React.FC = () => {
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <Table
-        dataSource={dataSource.sort((a: any, b: any) => b.id - a.id)}
+        dataSource={dataSource.sort((a: any, b: any) => b.id - a.id).map((v: any) => {
+          return {
+            ...v,
+            title: v.title + (v.comments.length ? ' (' + v.comments.length + ')' : '')
+          }
+        })}
         columns={columns}
         rowKey={(record: any) => record['id']}
         style={{ width: 1000, cursor: "pointer" }}
