@@ -3,12 +3,12 @@ import { gql } from "apollo-boost";
 import { useParams, useHistory } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { Divider, Button, Modal, Comment } from "antd";
-import { boardListQuery } from "./BoardListPage";
+import { boardsQuery } from "./BoardListPage";
 import CommentEditor from "../components/CommentEditor";
 
-const boardDetailQuery = gql`
-  query Detail($id: ID!) {
-    detail(id: $id) {
+const readBoardQuery = gql`
+  query Board($id: ID!) {
+    board(id: $id) {
       id
       title
       contents
@@ -22,7 +22,7 @@ const boardDetailQuery = gql`
   }
 `;
 
-const boardDeleteMutation = gql`
+const deleteBoardMutation = gql`
   mutation DeleteBoard($id: ID!) {
     deleteBoard(id: $id) {
       id
@@ -47,14 +47,14 @@ const BoardDetailPage = () => {
     false
   );
   const [commentValue, setCommentValue] = useState("");
-  const { loading, data } = useQuery(boardDetailQuery, {
+  const { loading, data } = useQuery(readBoardQuery, {
     variables: { id }
   });
-  const [deleteBoard] = useMutation(boardDeleteMutation, {
+  const [deleteBoard] = useMutation(deleteBoardMutation, {
     awaitRefetchQueries: true,
     refetchQueries: [
       {
-        query: boardListQuery
+        query: boardsQuery
       }
     ]
   });
@@ -64,7 +64,7 @@ const BoardDetailPage = () => {
       awaitRefetchQueries: true,
       refetchQueries: [
         {
-          query: boardDetailQuery,
+          query: readBoardQuery,
           variables: { id }
         }
       ]
@@ -94,10 +94,12 @@ const BoardDetailPage = () => {
           borderRadius: 8
         }}
       >
-        <h1>{data.detail.title}</h1>
-        <h3>{data.detail.author}</h3>
+        <h1>{data.board.title}</h1>
+        <h3>{data.board.author}</h3>
         <Divider />
-        <p style={{ paddingTop: 20, fontSize: 20 }}>{data.detail.contents}</p>
+        {
+          data.board.contents.split('\n').map((line: string) => <div style={{fontSize: 20}}>{line}</div>)
+        }
       </div>
       <div
         style={{
@@ -142,13 +144,14 @@ const BoardDetailPage = () => {
         value={commentValue}
       />
       <div style={{ display: "flex", flexDirection: "column" }}>
-        {data.detail.comments
+        {data.board.comments
           .sort((a: any, b: any) => b.id - a.id)
           .map((comment: any) => {
             return (
               <Comment
                 author={<a>{comment.author}</a>}
                 content={<p>{comment.contents}</p>}
+                key={comment.id}
               />
             );
           })}

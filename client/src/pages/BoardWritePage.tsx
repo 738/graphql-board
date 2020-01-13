@@ -4,9 +4,9 @@ import { gql } from "apollo-boost";
 import { useMutation } from "@apollo/react-hooks";
 import { Divider, Input, Button } from "antd";
 import TextArea from "antd/lib/input/TextArea";
-import { boardListQuery } from "./BoardListPage";
+import { boardsQuery } from "./BoardListPage";
 
-const boardWriteMutation = gql`
+const createBoardMutation = gql`
   mutation CreateBoard($title: String!, $contents: String!, $author: String!) {
     createBoard(
       input: { title: $title, contents: $contents, author: $author }
@@ -21,10 +21,10 @@ const BoardWritePage = () => {
   let [author, setAuthor] = useState("");
   let [contents, setContents] = useState("");
   let history = useHistory();
-  const [createBoard] = useMutation(boardWriteMutation, {
+  const [createBoard] = useMutation(createBoardMutation, {
     awaitRefetchQueries: true,
       refetchQueries: [{
-        query: boardListQuery
+        query: boardsQuery
       }]
   });
 

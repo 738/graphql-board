@@ -16,7 +16,7 @@ const createBoard = (_, { input }): Board => {
     return newBoard;
 }
 
-const editBoard = (_, {id, input}): Board => {
+const updateBoard = (_, {id, input}): Board => {
     const { title, contents, author } = input;
     for (let i=0; i<boards.length; i++) {
         if (id == boards[i].id) {
@@ -52,12 +52,12 @@ const createComment = (_, { input }): Comment => {
 
 export default {
     Query: {
-        list: () => boards,
-        detail: getBoardById,
+        boards: () => boards,
+        board: getBoardById,
     },
     Mutation: {
         createBoard,
-        editBoard,
+        updateBoard,
         deleteBoard,
         createComment,
     }

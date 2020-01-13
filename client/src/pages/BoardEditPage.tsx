@@ -4,11 +4,11 @@ import { gql } from "apollo-boost";
 import { useMutation, useQuery } from "@apollo/react-hooks";
 import { Divider, Input, Button } from "antd";
 import TextArea from "antd/lib/input/TextArea";
-import { boardListQuery } from "./BoardListPage";
+import { boardsQuery } from "./BoardListPage";
 
-const boardDetailQuery = gql`
-  query Detail($id: ID!) {
-    detail(id: $id) {
+const readBoardQuery = gql`
+  query Board($id: ID!) {
+    board(id: $id) {
       id
       title
       contents
@@ -17,14 +17,14 @@ const boardDetailQuery = gql`
   }
 `;
 
-const boardEditMutation = gql`
-  mutation EditBoard(
+const updateBoardMutation = gql`
+  mutation UpdateBoard(
     $id: ID!
     $title: String!
     $contents: String!
     $author: String!
   ) {
-    editBoard(
+    updateBoard(
       id: $id
       input: { title: $title, contents: $contents, author: $author }
     ) {
@@ -40,20 +40,20 @@ const BoardEditPage = () => {
   let history = useHistory();
   let { id } = useParams();
   const { loading: detailLoading, data: detailData } = useQuery(
-    boardDetailQuery,
+    readBoardQuery,
     {
       variables: { id }
     }
   );
 
-  const [editBoard, { loading }] = useMutation(boardEditMutation, {
+  const [editBoard, { loading }] = useMutation(updateBoardMutation, {
     awaitRefetchQueries: true,
     refetchQueries: [
       {
-        query: boardListQuery
+        query: boardsQuery
       },
       {
-        query: boardDetailQuery,
+        query: readBoardQuery,
         variables: {
           id,
         }
@@ -62,9 +62,9 @@ const BoardEditPage = () => {
   });
   useEffect(() => {
     if (detailData) {
-      setTitle(detailData.detail.title);
-      setAuthor(detailData.detail.author);
-      setContents(detailData.detail.contents);
+      setTitle(detailData.board.title);
+      setAuthor(detailData.board.author);
+      setContents(detailData.board.contents);
     }
   }, [detailData]);
 

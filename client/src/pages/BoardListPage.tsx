@@ -4,9 +4,9 @@ import { useQuery } from "@apollo/react-hooks";
 import { gql } from "apollo-boost";
 import { useHistory } from "react-router";
 
-export const boardListQuery = gql`
+export const boardsQuery = gql`
   query GetList {
-    list {
+    boards {
       id
       title
       author
@@ -36,13 +36,13 @@ const columns = [
 ];
 
 const BoardListPage: React.FC = () => {
-  const { loading, error, data } = useQuery(boardListQuery);
+  const { loading, error, data } = useQuery(boardsQuery);
   let history = useHistory();
   
   if (loading) return <p>loading...</p>;
   if (error) return <p>{error} error!</p>;
 
-  let dataSource = data.list;
+  let dataSource = data.boards;
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
