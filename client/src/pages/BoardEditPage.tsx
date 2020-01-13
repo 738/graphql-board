@@ -29,9 +29,6 @@ const boardEditMutation = gql`
       input: { title: $title, contents: $contents, author: $author }
     ) {
       id
-      title
-      contents
-      author
     }
   }
 `;
@@ -54,6 +51,12 @@ const BoardEditPage = () => {
     refetchQueries: [
       {
         query: boardListQuery
+      },
+      {
+        query: boardDetailQuery,
+        variables: {
+          id,
+        }
       }
     ]
   });

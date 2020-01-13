@@ -12,8 +12,6 @@ const boardWriteMutation = gql`
       input: { title: $title, contents: $contents, author: $author }
     ) {
       id
-      title
-      author
     }
   }
 `;

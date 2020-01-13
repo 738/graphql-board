@@ -26,9 +26,6 @@ const boardDeleteMutation = gql`
   mutation DeleteBoard($id: ID!) {
     deleteBoard(id: $id) {
       id
-      title
-      contents
-      author
     }
   }
 `;
@@ -39,8 +36,6 @@ const createCommentMutation = gql`
       input: { boardId: $boardId, author: $author, contents: $contents }
     ) {
       id
-      author
-      contents
     }
   }
 `;
