@@ -1,58 +1,101 @@
 import Board, { Comment } from "../types/Board";
+import uuidv4 from 'uuid/v4';
+import assert from 'assert';
+import DB from '../db';
 
-const getBoardById = (_, { id }) => {
-    for (let i=0; i<boards.length; i++) {
-        if (id == boards[i].id) {
-            return boards[i];
-        }
+const getBoards = async (): Promise<Board[] | any> => {
+    try {
+        const db = await DB();
+        const boards = await (await db.collection('board').find().toArray()).reverse();
+        boards.forEach(board => {
+            board.comments = board.comments.reverse();
+        });
+        return boards;
+    } catch (error) {
+        console.log(error.stack);
+        return null;
     }
-    return null;
 }
 
-const createBoard = (_, { input }): Board => {
-    const id: string = (boards.length ? (+boards[boards.length - 1].id + 1) : 0) + '';
-    const newBoard = new Board(id, input);
-    boards.push(newBoard);
-    return newBoard;
+const getBoardById = async (_, { id }) => {
+    try {
+        const db = await DB();
+        const board = await db.collection('board').findOne({ id });
+        board.comments = board.comments.reverse();
+        return board;
+    } catch (error) {
+        console.log(error.stack);
+        return null;
+    }
 }
 
-const updateBoard = (_, {id, input}): Board => {
-    const { title, contents, author } = input;
-    for (let i=0; i<boards.length; i++) {
-        if (id == boards[i].id) {
-            boards[i].title = title;
-            boards[i].contents = contents;
-            boards[i].author = author;
-            return boards[i];
-        }
+const createBoard = async (_, { input }): Promise<Board> => {
+    try {
+        const db = await DB();
+        const id = uuidv4();
+        const newBoard = new Board(id, input);
+        let r = await db.collection('board').insertOne(newBoard);
+        assert.equal(1, r.insertedCount);
+        return newBoard;
+    } catch (error) {
+        console.log(error.stack);
+        return null;
     }
-    return null;
 }
 
-const deleteBoard = (_, { id }): Board => {
-    for (let i=0; i<boards.length; i++) {
-        if (id == boards[i].id) {
-            return boards.splice(i, 1).shift();
-        }
+const updateBoard = async (_, {id, input}): Promise<Board> => {
+    try {
+        const db = await DB();
+        const { title, contents, author } = input;
+        let r = await db.collection('board').updateOne({ id }, { $set: {
+            title, contents, author,
+        }});
+        assert.equal(1, r.modifiedCount);
+        let data = await db.collection('board').findOne({ id });
+        return data;
+    } catch (error) {
+        console.log(error.stack);
+        return null;
     }
-    return null;
 }
 
-const createComment = (_, { input }): Comment => {
-    for (let i=0; i<boards.length; i++) {
-        if (input.boardId == boards[i].id) {
-            const id: string = (boards[i].comments.length ? (+boards[i].comments[boards[i].comments.length - 1].id + 1) : 0)+ '';
-            const newComment = new Comment(id, input);
-            boards[i].comments.push(newComment);
-            return newComment;
-        }
+const deleteBoard = async (_, { id }): Promise<Board> => {
+    try {
+        const db = await DB();
+        const boardToDelete = await db.collection('board').findOne({ id })
+        let r = await db.collection('board').deleteOne({id});
+        assert.equal(1, r.deletedCount);
+        return boardToDelete;
+    } catch (error) {
+        console.log(error.stack);
+        return null;
     }
-    return null;
+}
+
+const createComment = async (_, { input }): Promise<Comment> => {
+    try {
+        const db = await DB();
+        const { boardId, title, author } = input;
+        const newComment = new Comment(uuidv4(), input);
+
+        const board = await db.collection('board').findOne({ id: boardId });
+        const { comments } = board;
+
+        let r = await db.collection('board').updateOne({ id: boardId }, { $set: {
+            comments: [...comments, newComment],
+        }});
+        assert.equal(1, r.modifiedCount);
+
+        return newComment;
+    } catch (error) {
+        console.log(error.stack);
+        return null;
+    }
 }
 
 export default {
     Query: {
-        boards: () => boards,
+        boards: getBoards,
         board: getBoardById,
     },
     Mutation: {

@@ -98,7 +98,7 @@ const BoardDetailPage = () => {
         <h3>{data.board.author}</h3>
         <Divider />
         {
-          data.board.contents.split('\n').map((line: string) => <div style={{fontSize: 20}}>{line}</div>)
+          data.board.contents.split('\n').map((line: string, index: number) => <p style={{fontSize: 20, wordBreak: 'break-all'}} key={index}>{line}</p>)
         }
       </div>
       <div
