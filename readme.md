@@ -12,6 +12,7 @@
 - GraphQL
 - apollo-server
 - apollo-client
+- MongoDB
 
 ## Running
 
@@ -34,3 +35,17 @@ npm run start
 ```
 
 - URL: http://localhost:3000
+
+### DB:
+
+Environment: MacOS
+
+```bash
+$ brew tap mongodb/brew
+$ brew install mongodb-community@4.2
+$ brew services start mongodb-community@4.2
+
+$ mongo
+$ > use graphql-board
+$ > db.createCollection("board")
+```
