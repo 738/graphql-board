@@ -3,30 +3,16 @@ import uuidv4 from 'uuid/v4';
 import assert from 'assert';
 import DB from '../db';
 
-const getBoards = async (): Promise<Board[] | any> => {
-    try {
-        const db = await DB();
-        const boards = await (await db.collection('board').find().toArray()).reverse();
-        boards.forEach(board => {
-            board.comments = board.comments.reverse();
-        });
-        return boards;
-    } catch (error) {
-        console.log(error.stack);
-        return null;
-    }
+const getBoards = async (): Promise<Board[]> => {
+    const db = await DB();
+    let boards = await db.collection('board').find().toArray();
+    return boards.reverse();
 }
 
-const getBoardById = async (_, { id }) => {
-    try {
-        const db = await DB();
-        const board = await db.collection('board').findOne({ id });
-        board.comments = board.comments.reverse();
-        return board;
-    } catch (error) {
-        console.log(error.stack);
-        return null;
-    }
+const getBoardById = async (_, { id }): Promise<Board> => {
+    const db = await DB();
+    const board = await db.collection('board').findOne({ id });
+    return board;
 }
 
 const createBoard = async (_, { input }): Promise<Board> => {
@@ -93,7 +79,7 @@ const createComment = async (_, { input }): Promise<Comment> => {
     }
 }
 
-export default {
+const resolvers = {
     Query: {
         boards: getBoards,
         board: getBoardById,
@@ -103,8 +89,17 @@ export default {
         updateBoard,
         deleteBoard,
         createComment,
+    },
+    Board: {
+        id: o => o.id,
+        title: o => o.title,
+        contents: o => o.contents,
+        author: o => o.author,
+        comments: o => o.comments.reverse(),
     }
 }
+
+export default resolvers;
 
 let boards: Board[] = [
     {
