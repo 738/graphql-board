@@ -12,8 +12,9 @@ const EXAMPLE_QUERY = gql`
 `;
 
 const Example = () => {
-  const { loading, data } = useQuery(EXAMPLE_QUERY);
+  const { loading, error, data } = useQuery(EXAMPLE_QUERY);
   if (loading) return <p>loading...</p>;
+  if (error) return <p>error: {error}</p>
   return (
     <ul>
       {data.boards.map((board: any) => (
