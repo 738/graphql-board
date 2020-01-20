@@ -10,9 +10,7 @@ export const boardsQuery = gql`
       id
       title
       author
-      comments {
-        id
-      }
+      commentsCount
     }
   }
 `;
@@ -50,7 +48,7 @@ const BoardListPage: React.FC = () => {
         dataSource={dataSource.sort((a: any, b: any) => b.id - a.id).map((v: any) => {
           return {
             ...v,
-            title: v.title + (v.comments.length ? ' (' + v.comments.length + ')' : '')
+            title: v.title + (v.commentsCount ? ' (' + v.commentsCount + ')' : '')
           }
         })}
         columns={columns}

@@ -7,6 +7,7 @@ const typeDefs = gql`
         contents: String!
         author: String!
         comments: [Comment!]!
+        commentsCount: Int!
     }
 
     type Comment {

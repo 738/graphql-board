@@ -96,6 +96,7 @@ const resolvers = {
         contents: o => o.contents,
         author: o => o.author,
         comments: o => o.comments.reverse(),
+        commentsCount: o => o.comments.length,
     }
 }
 
