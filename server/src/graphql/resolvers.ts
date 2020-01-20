@@ -1,26 +1,22 @@
 import Board, { Comment } from "../types/Board";
 import uuidv4 from 'uuid/v4';
 import assert from 'assert';
-import DB from '../db';
 
-const getBoards = async (): Promise<Board[]> => {
-    const db = await DB();
-    let boards = await db.collection('board').find().toArray();
+const getBoards = async (parents, args, context): Promise<Board[]> => {
+    let boards = await context.db.collection('board').find().toArray();
     return boards.reverse();
 }
 
-const getBoardById = async (_, { id }): Promise<Board> => {
-    const db = await DB();
-    const board = await db.collection('board').findOne({ id });
+const getBoardById = async (_, { id }, context): Promise<Board> => {
+    const board = await context.db.collection('board').findOne({ id });
     return board;
 }
 
-const createBoard = async (_, { input }): Promise<Board> => {
+const createBoard = async (_, { input }, context): Promise<Board> => {
     try {
-        const db = await DB();
         const id = uuidv4();
         const newBoard = new Board(id, input);
-        let r = await db.collection('board').insertOne(newBoard);
+        let r = await context.db.collection('board').insertOne(newBoard);
         assert.equal(1, r.insertedCount);
         return newBoard;
     } catch (error) {
@@ -29,15 +25,14 @@ const createBoard = async (_, { input }): Promise<Board> => {
     }
 }
 
-const updateBoard = async (_, {id, input}): Promise<Board> => {
+const updateBoard = async (_, {id, input}, context): Promise<Board> => {
     try {
-        const db = await DB();
         const { title, contents, author } = input;
-        let r = await db.collection('board').updateOne({ id }, { $set: {
+        let r = await context.db.collection('board').updateOne({ id }, { $set: {
             title, contents, author,
         }});
         assert.equal(1, r.modifiedCount);
-        let data = await db.collection('board').findOne({ id });
+        let data = await context.db.collection('board').findOne({ id });
         return data;
     } catch (error) {
         console.log(error.stack);
@@ -45,11 +40,10 @@ const updateBoard = async (_, {id, input}): Promise<Board> => {
     }
 }
 
-const deleteBoard = async (_, { id }): Promise<Board> => {
+const deleteBoard = async (_, { id }, context): Promise<Board> => {
     try {
-        const db = await DB();
-        const boardToDelete = await db.collection('board').findOne({ id })
-        let r = await db.collection('board').deleteOne({id});
+        const boardToDelete = await context.db.collection('board').findOne({ id })
+        let r = await context.db.collection('board').deleteOne({id});
         assert.equal(1, r.deletedCount);
         return boardToDelete;
     } catch (error) {
@@ -58,16 +52,15 @@ const deleteBoard = async (_, { id }): Promise<Board> => {
     }
 }
 
-const createComment = async (_, { input }): Promise<Comment> => {
+const createComment = async (_, { input }, context): Promise<Comment> => {
     try {
-        const db = await DB();
         const { boardId, title, author } = input;
         const newComment = new Comment(uuidv4(), input);
 
-        const board = await db.collection('board').findOne({ id: boardId });
+        const board = await context.db.collection('board').findOne({ id: boardId });
         const { comments } = board;
 
-        let r = await db.collection('board').updateOne({ id: boardId }, { $set: {
+        let r = await context.db.collection('board').updateOne({ id: boardId }, { $set: {
             comments: [...comments, newComment],
         }});
         assert.equal(1, r.modifiedCount);
